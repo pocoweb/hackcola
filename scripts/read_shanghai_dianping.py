@@ -14,7 +14,13 @@ REQUIRED_KEYS = {
     "shopGlng": "店铺经度",
     "shopGlat": "店铺纬度",
     "average_price": "人均消费",
-    "review_count": "评论数"
+    "review_count": "评论数",
+    'navi': 'navi',
+    'comment_list': 'commenct_list',
+    'mainCategoryName': 'main_category',
+    'comment_score_list': 'comment_score_list',
+    'power': 'power',
+    'shopPower': 'shop_power'
 }
 
 ADDITION_KEYS = {
@@ -80,20 +86,29 @@ class ReadDianping:
                 fields = []
                 for key in REQUIRED_KEYS:
                     if key in jdata:
-                        fields.append(jdata[key])
+                        value = jdata[key]
+                        if type(value) is list:
+                            if key == 'navi':
+                                value = [i['text'].replace('\t', ' ') for i in value]
+                            elif key == 'comment_list':
+                                value = [i['content'].replace('\t', ' ') for i in value]
+                            fields.append(','.join(value))
+                        else:
+                            fields.append(jdata[key])
                 self.res.append(fields)
 
-    def gen_csv_file(self):
+    def gen_csv_file(self, separator='\t'):
         """generate csv file"""
+        self._read_file()
         l = []
         for k, name in REQUIRED_KEYS.items():
-            l.append(name)
-        s = ','.join(l)
+            l.append(k)
+        s = separator.join(l)
         print(s)
         if not self.res:
             return
         for sub_list in self.res:
-            s = ','.join(sub_list)
+            s = separator.join(sub_list)
             print(s)
 
     def _get_block_id(self, lng, lat):
@@ -119,6 +134,7 @@ class ReadDianping:
             for line in fp:
                 line = line.strip()
                 jdata = json.loads(line)
+
                 ret = self._check_keys(jdata)
                 if not ret:
                     continue
@@ -182,8 +198,5 @@ if __name__ == '__main__':
         print('Usage: python3 {} data_file [transfer_coors=False]'.format(sys.argv[0]))
     else:
         rd = ReadDianping(sys.argv[1])
-        if len(sys.argv) == 3:
-            rd.tag_shops(sys.argv[2])
-        else:
-            rd.tag_shops()
+        rd.gen_csv_file()
 
