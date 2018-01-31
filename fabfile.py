@@ -12,21 +12,22 @@ def hello():
     print("Hello World!")
 
 def pull():
-	# if not exists:
-	# 	do git clone
-	code_dir = '/usr/share/nginx/hackcola'
-	with cd(code_dir):
-		sudo('git pull')
+    # if not exists:
+    #   do git clone
+    code_dir = '/usr/share/nginx/hackcola'
+    with cd(code_dir):
+        sudo('git pull')
 
 def commit():
+    local("git pull")
     local("git add -p . && git commit")
 
 def push():
     local("git push")
 
 def deploy():
-	commit()
-	push()
-	pull()
+    commit()
+    push()
+    pull()
 
 
