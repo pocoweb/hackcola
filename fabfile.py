@@ -1,6 +1,9 @@
 from __future__ import with_statement
-from fabric.api import local, settings, abort, run, cd, sudo
+from fabric.api import *
 from fabric.contrib.console import confirm
+
+
+env.hosts = ['hackcola.southeastasia.cloudapp.azure.com']
 
 def host_type():
     run('uname -s')
