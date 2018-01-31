@@ -78,7 +78,10 @@
               },
               draw: 'grid'
           }
-          new mapv.baiduMapLayer(map, dataSet, options);
+          if (window.layer) {
+            window.layer.destroy()
+          }
+          window.layer = new mapv.baiduMapLayer(map, dataSet, options);
         }
 
         $.get('data/high_consume_geo_drv.json', function(rs){
